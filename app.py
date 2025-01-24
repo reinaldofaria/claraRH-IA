@@ -1,3 +1,8 @@
+# Substituir o sqlite3 pelo pysqlite3 para garantir compatibilidade
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 import os
 import tempfile
 import streamlit as st
