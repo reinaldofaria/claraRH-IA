@@ -45,7 +45,7 @@ def load_existing_vector_store():
     if os.path.exists(os.path.join(persist_dictory)):
         vector_store = Chroma(
             persist_directory=persist_dictory,
-            embedding_function=GroqEmbeddings(api_key=config('GROQ_API_KEY')),
+            embedding_function=OpenAIEmbeddings(),
         )
         return vector_store
     return None
@@ -57,7 +57,7 @@ def add_to_vector_store(chunks, vector_store=None):
     else:
         vector_store = Chroma.from_documents(
             documents=chunks,
-            embedding=GroqEmbeddings(api_key=config('GROQ_API_KEY')),
+            embedding=OpenAIEmbeddings(),
             persist_directory=persist_dictory,
         )
     return vector_store
