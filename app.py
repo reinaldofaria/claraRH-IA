@@ -11,13 +11,15 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_groq import ChatGroq
+from embedding import GroqEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 
 
 os.environ['OPENAI_API_KEY'] = config('OPENAI_API_KEY')
-# os.environ['GROQ_API_KEY'] = config('GROQ_API_KEY')
+os.environ['GROQ_API_KEY'] = config('GROQ_API_KEY')
 persist_dictory = 'db'
 
 
@@ -43,7 +45,7 @@ def load_existing_vector_store():
     if os.path.exists(os.path.join(persist_dictory)):
         vector_store = Chroma(
             persist_directory=persist_dictory,
-            embedding_function=OpenAIEmbeddings(),
+            embedding_function=GroqEmbeddings(api_key=config('GROQ_API_KEY')),
         )
         return vector_store
     return None
@@ -55,14 +57,14 @@ def add_to_vector_store(chunks, vector_store=None):
     else:
         vector_store = Chroma.from_documents(
             documents=chunks,
-            embedding=OpenAIEmbeddings(),
+            embedding=GroqEmbeddings(api_key=config('GROQ_API_KEY')),
             persist_directory=persist_dictory,
         )
     return vector_store
 
 
 def ask_question(model, query, vector_store):
-    llm = ChatOpenAI(model=model)
+    llm = ChatGroq(model=model)
     retriever = vector_store.as_retriever()
 
     system_prompt = '''
@@ -124,11 +126,13 @@ with st.sidebar:
             )
 
     model_options=[
-        'gpt-3.5-turbo',
-        'gpt-4',
-        'gpt-4-turbo',
-        'gpt-4o-mini',
-        'gpt-4o',
+        'llama3-70b-8192',
+        'llama-3.3-70b-versatile',
+        # 'gpt-3.5-turbo',
+        # 'gpt-4',
+        # 'gpt-4-turbo',
+        # 'gpt-4o-mini',
+        # 'gpt-4o',
     ]
 
     selected_model = st.sidebar.selectbox(
