@@ -128,7 +128,7 @@ tenacity==9.0.0
 tiktoken==0.8.0
 tokenizers==0.20.3
 toml==0.10.2
-tornado==6.4.2
+tornado==6.5.1
 tqdm==4.67.1
 typer==0.15.1
 typing-inspect==0.9.0
